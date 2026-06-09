@@ -1,0 +1,1120 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [5 0 R 7 0 R 9 0 R 11 0 R 13 0 R 15 0 R 17 0 R 19 0 R 21 0 R] /Count 9 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+4 0 obj
+<< /Length 3048 >>
+stream
+BT
+/F1 9 Tf
+1 0 0 1 54 738 Tm
+(COPY_THIS_TO_CODEX.md) Tj
+0 -12 Td
+(=====================) Tj
+0 -12 Td
+(# Paste this into Codex) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(You are working in a Next.js App Router + TypeScript + Supabase internal operations app for ) Tj
+0 -12 Td
+(a furniture retail business called **ChaChaCha Ops**.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Goal) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Turn the existing scaffold into a proper production-minded MVP app. Do not treat the current) Tj
+0 -12 Td
+( repo as finished. It is a shell with pages, RBAC helpers, validators, and Supabase ) Tj
+0 -12 Td
+(utilities. Your job is to make the app real by adding database migrations, Supabase ) Tj
+0 -12 Td
+(workflows/RPCs, real data reads/writes, RLS, and tests.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Current stack) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- Next.js App Router) Tj
+0 -12 Td
+(- TypeScript) Tj
+0 -12 Td
+(- Supabase Auth + Postgres) Tj
+0 -12 Td
+(- Tailwind CSS) Tj
+0 -12 Td
+(- shadcn-style local UI components) Tj
+0 -12 Td
+(- Zod validation) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Critical business rules) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(1. Inventory movements are the source of truth.) Tj
+0 -12 Td
+(2. Inventory balances are read/materialized state derived from movements.) Tj
+0 -12 Td
+(3. Inventory states must support `on_hand`, `reserved`, and `sold`.) Tj
+0 -12 Td
+(4. No stock reservation is allowed without payment/deposit.) Tj
+0 -12 Td
+(5. Deposit creates reservation.) Tj
+0 -12 Td
+(6. Delivery completion converts `reserved` to `sold`.) Tj
+0 -12 Td
+(7. Sales can be `cash`, `credit`, or `mixed`.) Tj
+0 -12 Td
+(8. Multiple inventory locations must be supported.) Tj
+0 -12 Td
+(9. Credit accounts need installment tracking.) Tj
+0 -12 Td
+(10. Collections workflow must track actions, promises, and payments.) Tj
+0 -12 Td
+(11. Delivery workflow must track status and completion proof.) Tj
+0 -12 Td
+(12. Daily cash reconciliation must compare expected vs counted cash.) Tj
+0 -12 Td
+(13. Owner dashboard must show daily operational control metrics.) Tj
+0 -12 Td
+(14. Sensitive operations must be guarded by RBAC, server-side checks, Supabase RLS, and ) Tj
+0 -12 Td
+(audit logs.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Existing app structure to preserve) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- `app/\(auth\)/login` for login.) Tj
+0 -12 Td
+(- `app/\(dashboard\)/owner` for owner dashboard.) Tj
+0 -12 Td
+(- `app/\(dashboard\)/sales` for sales entry.) Tj
+0 -12 Td
+(- `app/\(dashboard\)/inventory` for inventory movements.) Tj
+0 -12 Td
+(- `app/\(dashboard\)/credit` for credit application review.) Tj
+0 -12 Td
+(- `app/\(dashboard\)/collections` scaffold.) Tj
+0 -12 Td
+(- `app/\(dashboard\)/delivery` scaffold.) Tj
+0 -12 Td
+(- `app/\(dashboard\)/finance` scaffold.) Tj
+0 -12 Td
+(- `lib/permissions/*` for RBAC permission map.) Tj
+0 -12 Td
+(- `lib/auth/*` for server-side permission checks.) Tj
+0 -12 Td
+(- `lib/validators/*` for Zod schemas.) Tj
+0 -12 Td
+(- `lib/supabase/*` for Supabase clients.) Tj
+0 -12 Td
+(- `components/ui/*` for reusable UI primitives.) Tj
+0 -12 Td
+() Tj
+0 -24 Td
+(Page 1 of 9) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 4 0 R >>
+endobj
+6 0 obj
+<< /Length 2728 >>
+stream
+BT
+/F1 9 Tf
+1 0 0 1 54 738 Tm
+(## First implementation task) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Start by creating a real Supabase database layer:) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(1. Add `db/migrations/0001_core_schema.sql` with tables:) Tj
+0 -12 Td
+(   - `users`) Tj
+0 -12 Td
+(   - `roles`) Tj
+0 -12 Td
+(   - `user_roles`) Tj
+0 -12 Td
+(   - `locations`) Tj
+0 -12 Td
+(   - `customers`) Tj
+0 -12 Td
+(   - `suppliers`) Tj
+0 -12 Td
+(   - `products`) Tj
+0 -12 Td
+(   - `product_variants`) Tj
+0 -12 Td
+(   - `price_lists`) Tj
+0 -12 Td
+(   - `price_list_items`) Tj
+0 -12 Td
+(   - `inventory_balances`) Tj
+0 -12 Td
+(   - `inventory_movements`) Tj
+0 -12 Td
+(   - `sales`) Tj
+0 -12 Td
+(   - `sale_lines`) Tj
+0 -12 Td
+(   - `payments`) Tj
+0 -12 Td
+(   - `credit_applications`) Tj
+0 -12 Td
+(   - `credit_accounts`) Tj
+0 -12 Td
+(   - `installment_schedule`) Tj
+0 -12 Td
+(   - `collection_actions`) Tj
+0 -12 Td
+(   - `deliveries`) Tj
+0 -12 Td
+(   - `expenses`) Tj
+0 -12 Td
+(   - `cash_sessions`) Tj
+0 -12 Td
+(   - `audit_logs`) Tj
+0 -12 Td
+(2. Add enums/check constraints for statuses and movement types.) Tj
+0 -12 Td
+(3. Add `db/migrations/0002_seed_roles.sql` for the roles used by ) Tj
+0 -12 Td
+(`lib/permissions/permissions.ts`.) Tj
+0 -12 Td
+(4. Add `db/migrations/0003_inventory_rpc.sql` for:) Tj
+0 -12 Td
+(   - `fn_confirm_reservation\(sale_id uuid\)`) Tj
+0 -12 Td
+(   - `fn_complete_delivery\(delivery_id uuid\)`) Tj
+0 -12 Td
+(   - `fn_post_inventory_movement\(...\)`) Tj
+0 -12 Td
+(5. Add `db/migrations/0004_rls_policies.sql` for role-aware access control.) Tj
+0 -12 Td
+(6. Add `db/migrations/0005_audit_triggers.sql` for audit logs.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Then wire app behavior) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(1. Replace hardcoded dashboard/sales/inventory/credit sample arrays with Supabase queries.) Tj
+0 -12 Td
+(2. Update sales server action so it creates:) Tj
+0 -12 Td
+(   - customer if needed,) Tj
+0 -12 Td
+(   - sale,) Tj
+0 -12 Td
+(   - sale lines,) Tj
+0 -12 Td
+(   - payment/deposit,) Tj
+0 -12 Td
+(   - reservation via `fn_confirm_reservation`.) Tj
+0 -12 Td
+(3. Update delivery route/action so completion calls `fn_complete_delivery`.) Tj
+0 -12 Td
+(4. Update credit review so approval creates credit account and installment schedule.) Tj
+0 -12 Td
+(5. Update collections so payments apply to oldest unpaid installments.) Tj
+0 -12 Td
+(6. Update finance close so it calculates expected cash and variance.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Rules for implementation) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- Do not let clients directly update inventory balances.) Tj
+0 -12 Td
+(- Do not manually set sold/reserved quantities from the UI.) Tj
+0 -12 Td
+(- Do not bypass permissions in server actions or route handlers.) Tj
+0 -24 Td
+(Page 2 of 9) Tj
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 6 0 R >>
+endobj
+8 0 obj
+<< /Length 2593 >>
+stream
+BT
+/F1 9 Tf
+1 0 0 1 54 738 Tm
+(- Prefer Supabase RPC for multi-table transactions.) Tj
+0 -12 Td
+(- Keep UI components reusable.) Tj
+0 -12 Td
+(- Keep domain logic out of page components where possible.) Tj
+0 -12 Td
+(- Use Zod schemas for every mutation payload.) Tj
+0 -12 Td
+(- Add tests for permission logic and business workflows.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Expected output from Codex) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- A committed branch with migrations, working server actions/routes, and real Supabase-) Tj
+0 -12 Td
+(backed pages.) Tj
+0 -12 Td
+(- Updated README setup instructions.) Tj
+0 -12 Td
+(- Tests/checks run and listed clearly.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(PROJECT_BRIEF.md) Tj
+0 -12 Td
+(================) Tj
+0 -12 Td
+(# Project Brief: ChaChaCha Ops) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Business) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(ChaChaCha Ops is an internal furniture retail operations app for managing store and ) Tj
+0 -12 Td
+(warehouse operations.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## MVP modules) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(1. Auth and role-based access control.) Tj
+0 -12 Td
+(2. Owner dashboard.) Tj
+0 -12 Td
+(3. Sales entry.) Tj
+0 -12 Td
+(4. Inventory movements and balances.) Tj
+0 -12 Td
+(5. Credit application review.) Tj
+0 -12 Td
+(6. Credit accounts and installment tracking.) Tj
+0 -12 Td
+(7. Collections workflow.) Tj
+0 -12 Td
+(8. Delivery workflow.) Tj
+0 -12 Td
+(9. Daily cash/finance close.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Non-negotiable control rules) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(| Rule | Why it matters |) Tj
+0 -12 Td
+(| --- | --- |) Tj
+0 -12 Td
+(| Inventory movements are source of truth | Prevents manual stock manipulation and reporting) Tj
+0 -12 Td
+( drift. |) Tj
+0 -12 Td
+(| Balances are derived from movements | Makes stock numbers explainable and auditable. |) Tj
+0 -12 Td
+(| No reservation without payment | Prevents unpaid stock holds. |) Tj
+0 -12 Td
+(| Deposit creates reservation | Matches retail operating process. |) Tj
+0 -12 Td
+(| Delivery completion converts reserved to sold | Keeps physical fulfillment tied to stock ) Tj
+0 -12 Td
+(state. |) Tj
+0 -12 Td
+(| Multi-location inventory | Supports warehouse/store split. |) Tj
+0 -12 Td
+(| RBAC everywhere | Internal users should only see/do their job. |) Tj
+0 -12 Td
+(| Audit logs for critical changes | Owner needs traceability for money, credit, and stock. |) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## MVP user roles) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- `owner`) Tj
+0 -12 Td
+(- `ops_manager`) Tj
+0 -12 Td
+(- `salesperson`) Tj
+0 -12 Td
+(- `cashier`) Tj
+0 -12 Td
+(- `inventory_controller`) Tj
+0 -24 Td
+(Page 3 of 9) Tj
+ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Length 2369 >>
+stream
+BT
+/F1 9 Tf
+1 0 0 1 54 738 Tm
+(- `credit_officer`) Tj
+0 -12 Td
+(- `collections_officer`) Tj
+0 -12 Td
+(- `delivery_coordinator`) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## MVP success definition) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(The MVP is successful when a real user can:) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(1. Log in.) Tj
+0 -12 Td
+(2. See only allowed modules.) Tj
+0 -12 Td
+(3. Create a sale.) Tj
+0 -12 Td
+(4. Take a deposit/payment.) Tj
+0 -12 Td
+(5. Reserve stock through a movement ledger.) Tj
+0 -12 Td
+(6. Complete delivery and convert reserved stock to sold.) Tj
+0 -12 Td
+(7. Approve credit and generate installment schedules.) Tj
+0 -12 Td
+(8. Log collection actions and payments.) Tj
+0 -12 Td
+(9. Close daily cash.) Tj
+0 -12 Td
+(10. See owner dashboard control metrics.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(IMPLEMENTATION_PLAN.md) Tj
+0 -12 Td
+(======================) Tj
+0 -12 Td
+(# Implementation Plan) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Phase 1: Make the scaffold runnable) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- Run `npm install`.) Tj
+0 -12 Td
+(- Copy `.env.example` to `.env.local`.) Tj
+0 -12 Td
+(- Add Supabase URL and anon key.) Tj
+0 -12 Td
+(- Run `npm run dev`.) Tj
+0 -12 Td
+(- Confirm `/login`, `/owner`, `/sales`, `/inventory`, and `/credit` render.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Phase 2: Create real Supabase schema) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Add migrations in this order:) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(1. `0001_core_schema.sql`) Tj
+0 -12 Td
+(2. `0002_seed_roles.sql`) Tj
+0 -12 Td
+(3. `0003_inventory_rpc.sql`) Tj
+0 -12 Td
+(4. `0004_rls_policies.sql`) Tj
+0 -12 Td
+(5. `0005_audit_triggers.sql`) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Phase 3: Auth and RBAC) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- Create Supabase Auth user for owner.) Tj
+0 -12 Td
+(- Insert matching app `users` row.) Tj
+0 -12 Td
+(- Seed `roles`.) Tj
+0 -12 Td
+(- Insert owner `user_roles` row.) Tj
+0 -12 Td
+(- Confirm `/owner` works for owner.) Tj
+0 -12 Td
+(- Confirm `/forbidden` works for unauthorized roles.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Phase 4: Real sales and reservation) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- Replace sales form hardcoded product/location with real select/search.) Tj
+0 -12 Td
+(- Server action creates `sales`, `sale_lines`, and `payments`.) Tj
+0 -12 Td
+(- Deposit/full payment calls `fn_confirm_reservation`.) Tj
+0 -12 Td
+(- `fn_confirm_reservation` posts `reserve_out` movements.) Tj
+0 -24 Td
+(Page 4 of 9) Tj
+ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 10 0 R >>
+endobj
+12 0 obj
+<< /Length 2692 >>
+stream
+BT
+/F1 9 Tf
+1 0 0 1 54 738 Tm
+() Tj
+0 -12 Td
+(## Phase 5: Real inventory) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- Inventory page reads `inventory_movements` and `inventory_balances`.) Tj
+0 -12 Td
+(- Manual adjustments require `inventory.movement.create`.) Tj
+0 -12 Td
+(- Do not expose direct editing of `inventory_balances`.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Phase 6: Delivery workflow) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- Create delivery records for reserved sales.) Tj
+0 -12 Td
+(- Delivery completion calls `fn_complete_delivery`.) Tj
+0 -12 Td
+(- Completion posts `sold_out_delivery` movement rows.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Phase 7: Credit and collections) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- Credit approval creates `credit_accounts` and `installment_schedule`.) Tj
+0 -12 Td
+(- Collection payments apply to oldest unpaid installments.) Tj
+0 -12 Td
+(- Collection actions log call/visit/promise/payment follow-up.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Phase 8: Finance close and owner dashboard) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- Add `cash_sessions` table.) Tj
+0 -12 Td
+(- Expected cash = cash payments + cash collections for location/date.) Tj
+0 -12 Td
+(- Variance = counted cash - expected cash.) Tj
+0 -12 Td
+(- Owner dashboard reads from SQL views/RPCs instead of raw UI aggregation.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Phase 9: Production hardening) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- Add RLS policies.) Tj
+0 -12 Td
+(- Add audit triggers.) Tj
+0 -12 Td
+(- Add tests.) Tj
+0 -12 Td
+(- Generate Supabase TypeScript types.) Tj
+0 -12 Td
+(- Add CI checks for `npm run typecheck` and `npm run build`.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(DATABASE_BLUEPRINT.md) Tj
+0 -12 Td
+(=====================) Tj
+0 -12 Td
+(# Database Blueprint) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Required tables) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(| Table | Purpose |) Tj
+0 -12 Td
+(| --- | --- |) Tj
+0 -12 Td
+(| `users` | App profile linked to Supabase Auth. |) Tj
+0 -12 Td
+(| `roles` | RBAC role catalog. |) Tj
+0 -12 Td
+(| `user_roles` | User-to-role assignment. |) Tj
+0 -12 Td
+(| `locations` | Store/warehouse inventory locations. |) Tj
+0 -12 Td
+(| `customers` | Customer profile. |) Tj
+0 -12 Td
+(| `suppliers` | Supplier/vendor profile. |) Tj
+0 -12 Td
+(| `products` | Product family/catalog item. |) Tj
+0 -12 Td
+(| `product_variants` | Sellable SKU/variant. |) Tj
+0 -12 Td
+(| `price_lists` | Pricing groups/versions. |) Tj
+0 -12 Td
+(| `price_list_items` | SKU prices per price list. |) Tj
+0 -12 Td
+(| `inventory_movements` | Source-of-truth stock ledger. |) Tj
+0 -12 Td
+(| `inventory_balances` | Derived read model by variant/location. |) Tj
+0 -12 Td
+(| `sales` | Sale header. |) Tj
+0 -12 Td
+(| `sale_lines` | Sale line items. |) Tj
+0 -24 Td
+(Page 5 of 9) Tj
+ET
+endstream
+endobj
+13 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 12 0 R >>
+endobj
+14 0 obj
+<< /Length 2935 >>
+stream
+BT
+/F1 9 Tf
+1 0 0 1 54 738 Tm
+(| `payments` | Deposits, final payments, credit payments. |) Tj
+0 -12 Td
+(| `credit_applications` | Credit review request. |) Tj
+0 -12 Td
+(| `credit_accounts` | Approved account/loan. |) Tj
+0 -12 Td
+(| `installment_schedule` | Due dates and balances. |) Tj
+0 -12 Td
+(| `collection_actions` | Calls, visits, promises, collection notes. |) Tj
+0 -12 Td
+(| `deliveries` | Delivery scheduling and completion. |) Tj
+0 -12 Td
+(| `expenses` | Store/operations expenses. |) Tj
+0 -12 Td
+(| `cash_sessions` | Daily cash open/close reconciliation. |) Tj
+0 -12 Td
+(| `audit_logs` | Immutable operational audit trail. |) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Required enums/statuses) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- `sale_status`: `draft`, `reserved`, `delivery_pending`, `delivered`, `cancelled`) Tj
+0 -12 Td
+(- `payment_mode`: `cash`, `credit`, `mixed`) Tj
+0 -12 Td
+(- `payment_method`: `cash`, `card`, `bank_transfer`, `mobile_money`) Tj
+0 -12 Td
+(- `payment_kind`: `deposit`, `final`, `credit_installment`, `refund`) Tj
+0 -12 Td
+(- `inventory_movement_type`: `stock_in_purchase`, `stock_in_adjustment`, `reserve_out`, ) Tj
+0 -12 Td
+(`reserve_release`, `sold_out_delivery`, `transfer_out`, `transfer_in`, `damage_out`) Tj
+0 -12 Td
+(- `credit_application_status`: `draft`, `submitted`, `under_review`, `approved`, `rejected`,) Tj
+0 -12 Td
+( `cancelled`) Tj
+0 -12 Td
+(- `credit_account_status`: `active`, `closed`, `defaulted`, `restructured`) Tj
+0 -12 Td
+(- `installment_status`: `pending`, `partial`, `paid`, `overdue`) Tj
+0 -12 Td
+(- `delivery_status`: `pending`, `scheduled`, `out_for_delivery`, `completed`, `failed`, ) Tj
+0 -12 Td
+(`cancelled`) Tj
+0 -12 Td
+(- `cash_session_status`: `open`, `closed`) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Critical RPC functions) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(### `fn_confirm_reservation\(p_sale_id uuid\)`) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Must:) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(1. Check payment/deposit exists.) Tj
+0 -12 Td
+(2. Check line stock is available at sale location.) Tj
+0 -12 Td
+(3. Insert `reserve_out` inventory movements.) Tj
+0 -12 Td
+(4. Update sale status to `reserved`.) Tj
+0 -12 Td
+(5. Audit the transition.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(### `fn_complete_delivery\(p_delivery_id uuid\)`) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Must:) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(1. Check delivery exists and sale is reserved/delivery pending.) Tj
+0 -12 Td
+(2. Insert `sold_out_delivery` movement rows.) Tj
+0 -12 Td
+(3. Mark delivery `completed`.) Tj
+0 -12 Td
+(4. Mark sale `delivered`.) Tj
+0 -12 Td
+(5. Audit the transition.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(### `fn_apply_credit_payment\(p_credit_account_id uuid, p_amount numeric\)`) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Must:) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(1. Insert payment row.) Tj
+0 -12 Td
+(2. Apply amount to oldest unpaid installments.) Tj
+0 -12 Td
+(3. Update installment statuses.) Tj
+0 -12 Td
+(4. Audit payment application.) Tj
+0 -12 Td
+() Tj
+0 -24 Td
+(Page 6 of 9) Tj
+ET
+endstream
+endobj
+15 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 14 0 R >>
+endobj
+16 0 obj
+<< /Length 2579 >>
+stream
+BT
+/F1 9 Tf
+1 0 0 1 54 738 Tm
+(### `fn_close_cash_session\(p_location_id uuid, p_session_date date, p_counted_cash numeric\)`) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Must:) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(1. Calculate expected cash from cash payments/collections.) Tj
+0 -12 Td
+(2. Store counted cash.) Tj
+0 -12 Td
+(3. Store variance.) Tj
+0 -12 Td
+(4. Prevent duplicate close.) Tj
+0 -12 Td
+(5. Audit close.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## RLS requirements) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- Enable RLS on all operational tables.) Tj
+0 -12 Td
+(- Authenticated users can read their allowed module data.) Tj
+0 -12 Td
+(- Only owners/ops managers can see cross-module sensitive data.) Tj
+0 -12 Td
+(- Inventory balances should be readable but not directly editable by normal users.) Tj
+0 -12 Td
+(- Inventory movements should only be inserted by allowed roles or secure RPCs.) Tj
+0 -12 Td
+(- Financial writes should require cashier/owner/ops manager permissions.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(APP_STRUCTURE.md) Tj
+0 -12 Td
+(================) Tj
+0 -12 Td
+(# App Structure Guide) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## `app/`) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Next.js App Router routes.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- `\(auth\)/login`: login screen and login server action.) Tj
+0 -12 Td
+(- `\(dashboard\)/layout.tsx`: shared dashboard shell and navigation.) Tj
+0 -12 Td
+(- `\(dashboard\)/owner`: owner KPI/control dashboard.) Tj
+0 -12 Td
+(- `\(dashboard\)/sales`: sales entry.) Tj
+0 -12 Td
+(- `\(dashboard\)/inventory`: movement ledger UI.) Tj
+0 -12 Td
+(- `\(dashboard\)/credit`: credit application review.) Tj
+0 -12 Td
+(- `\(dashboard\)/collections`: collections scaffold.) Tj
+0 -12 Td
+(- `\(dashboard\)/delivery`: delivery scaffold.) Tj
+0 -12 Td
+(- `\(dashboard\)/finance`: cash close scaffold.) Tj
+0 -12 Td
+(- `api/*`: guarded route-handler boundaries for mutations.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## `components/`) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Reusable UI pieces.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- `ui`: local shadcn-style primitives.) Tj
+0 -12 Td
+(- `tables`: table helpers and status badges.) Tj
+0 -12 Td
+(- `dashboards`: KPI/dashboard components.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## `lib/`) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Application logic.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- `auth`: current role lookup and permission guard.) Tj
+0 -12 Td
+(- `permissions`: canonical RBAC map.) Tj
+0 -12 Td
+(- `supabase`: browser/server/middleware clients.) Tj
+0 -12 Td
+(- `validators`: Zod schemas for mutations.) Tj
+0 -12 Td
+(- `domain`: pure business rules.) Tj
+0 -12 Td
+(- `utils`: shared helpers.) Tj
+0 -24 Td
+(Page 7 of 9) Tj
+ET
+endstream
+endobj
+17 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 16 0 R >>
+endobj
+18 0 obj
+<< /Length 2378 >>
+stream
+BT
+/F1 9 Tf
+1 0 0 1 54 738 Tm
+() Tj
+0 -12 Td
+(## `types/`) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Generated/shared TypeScript types. Replace placeholder database types with generated ) Tj
+0 -12 Td
+(Supabase types after schema is created.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## `docs/`) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Human-readable architecture, workflows, and RBAC notes.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## `db/`) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(Add real Supabase migrations here. This folder is the next major work item.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(ACCEPTANCE_CHECKLIST.md) Tj
+0 -12 Td
+(=======================) Tj
+0 -12 Td
+(# Acceptance Checklist) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Setup) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- [ ] `npm install` succeeds.) Tj
+0 -12 Td
+(- [ ] `.env.local` is configured.) Tj
+0 -12 Td
+(- [ ] `npm run dev` starts app.) Tj
+0 -12 Td
+(- [ ] `npm run typecheck` passes.) Tj
+0 -12 Td
+(- [ ] `npm run build` passes.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Auth/RBAC) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- [ ] Owner can access all modules.) Tj
+0 -12 Td
+(- [ ] Salesperson can access sales only.) Tj
+0 -12 Td
+(- [ ] Cashier can capture payments and close cash.) Tj
+0 -12 Td
+(- [ ] Inventory controller can post allowed movements only.) Tj
+0 -12 Td
+(- [ ] Credit officer can review credit applications.) Tj
+0 -12 Td
+(- [ ] Collections officer can log collection actions/payments.) Tj
+0 -12 Td
+(- [ ] Delivery coordinator can schedule/complete deliveries.) Tj
+0 -12 Td
+(- [ ] Unauthorized users see `/forbidden`.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Inventory) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- [ ] Stock changes only through `inventory_movements`.) Tj
+0 -12 Td
+(- [ ] `inventory_balances` is derived and cannot be manually edited from UI.) Tj
+0 -12 Td
+(- [ ] Reservation posts `reserve_out`.) Tj
+0 -12 Td
+(- [ ] Delivery completion posts `sold_out_delivery`.) Tj
+0 -12 Td
+(- [ ] Negative stock states are blocked.) Tj
+0 -12 Td
+(- [ ] Multi-location stock works.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Sales) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- [ ] Sale can be cash, credit, or mixed.) Tj
+0 -12 Td
+(- [ ] Deposit creates reservation.) Tj
+0 -12 Td
+(- [ ] No reservation without payment.) Tj
+0 -12 Td
+(- [ ] Sale lines use real products/variants/prices.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Credit/Collections) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- [ ] Credit application can be approved/rejected.) Tj
+0 -24 Td
+(Page 8 of 9) Tj
+ET
+endstream
+endobj
+19 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 18 0 R >>
+endobj
+20 0 obj
+<< /Length 1053 >>
+stream
+BT
+/F1 9 Tf
+1 0 0 1 54 738 Tm
+(- [ ] Approved credit creates account and installments.) Tj
+0 -12 Td
+(- [ ] Payments apply to installments.) Tj
+0 -12 Td
+(- [ ] Collection actions are logged.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Delivery) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- [ ] Delivery can be scheduled.) Tj
+0 -12 Td
+(- [ ] Delivery completion requires allowed role.) Tj
+0 -12 Td
+(- [ ] Completion converts reserved stock to sold.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Finance close) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- [ ] Cash sessions open/close.) Tj
+0 -12 Td
+(- [ ] Expected cash is system-calculated.) Tj
+0 -12 Td
+(- [ ] Variance is stored and visible to owner.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(## Audit) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+(- [ ] Sales status changes are audited.) Tj
+0 -12 Td
+(- [ ] Payments are audited.) Tj
+0 -12 Td
+(- [ ] Inventory movements are audited.) Tj
+0 -12 Td
+(- [ ] Credit decisions are audited.) Tj
+0 -12 Td
+(- [ ] Delivery completion is audited.) Tj
+0 -12 Td
+(- [ ] Cash close is audited.) Tj
+0 -12 Td
+() Tj
+0 -12 Td
+() Tj
+0 -24 Td
+(Page 9 of 9) Tj
+ET
+endstream
+endobj
+21 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 20 0 R >>
+endobj
+xref
+0 22
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000169 00000 n 
+0000000237 00000 n 
+0000003337 00000 n 
+0000003463 00000 n 
+0000006243 00000 n 
+0000006369 00000 n 
+0000009014 00000 n 
+0000009140 00000 n 
+0000011562 00000 n 
+0000011690 00000 n 
+0000014435 00000 n 
+0000014563 00000 n 
+0000017551 00000 n 
+0000017679 00000 n 
+0000020311 00000 n 
+0000020439 00000 n 
+0000022870 00000 n 
+0000022998 00000 n 
+0000024104 00000 n 
+trailer
+<< /Size 22 /Root 1 0 R >>
+startxref
+24232
+%%EOF
